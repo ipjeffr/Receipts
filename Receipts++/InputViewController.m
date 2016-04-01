@@ -31,7 +31,7 @@
         switch (s.tag) {
             case 1:
                 if (s.on) {
-                    [tagSet addObject:[self createTagWithString:@"Personal"]];
+                    [tagSet addObject:[self createTagWithString:@"Business"]];
                     break;
                 }
             case 2:
@@ -41,7 +41,7 @@
                 }
             case 3:
                 if (s.on) {
-                    [tagSet addObject:[self createTagWithString:@"Business"]];
+                    [tagSet addObject:[self createTagWithString:@"Personal"]];
                     break;
                 }
             default:
@@ -53,8 +53,12 @@
 
 -(Tag*)createTagWithString:(NSString*)tagName {
     
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"tagName == %@", tagName]];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tag" inManagedObjectContext:self.managedOC];
+    [request setEntity:entity];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"tagName == %@", tagName];
+    [request setPredicate:predicate];
     
     NSError *error;
     NSArray *results = [self.managedOC executeFetchRequest:request error:&error];

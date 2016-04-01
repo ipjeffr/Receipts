@@ -41,6 +41,11 @@
     NSEntityDescription *tagEntity = [NSEntityDescription entityForName:@"Tag" inManagedObjectContext:self.managedObjectContext];
     fetchTags.entity = tagEntity;
     
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"tagName"
+                                                                       ascending:YES];
+    NSArray *sortDescriptors = @[sortDescriptor];
+    [fetchTags setSortDescriptors:sortDescriptors];
+    
     NSError *error;
     self.allTags = [self.managedObjectContext executeFetchRequest:fetchTags error:&error];
     if (error) {
@@ -53,9 +58,10 @@
 
 - (void)setupReceiptsDictionary {
     NSMutableDictionary *receipts = [[NSMutableDictionary alloc] init];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"amount" ascending:YES];
     for (Tag *tag in self.allTags) {
         NSSet *r = tag.receipts;
-        NSArray *rArray = [r allObjects];
+        NSArray *rArray = [r sortedArrayUsingDescriptors:@[sortDescriptor]];
         [receipts setObject:rArray forKey:tag.tagName];
     }
     self.receiptsDictionary = receipts;
